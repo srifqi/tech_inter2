@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useParams } from "react-router";
 import { useAuth } from "../src/AuthContext";
 import UserInfo from "../components/UserInfo";
 import AttendanceTable from "../components/AttendanceTable";
+import NotFound from "./NotFound";
 
 /**
  * A page showing an information table and a list of submitted attendance of an employee with given ID
@@ -9,9 +11,18 @@ import AttendanceTable from "../components/AttendanceTable";
 function EmployeeDetail() {
 	const params = useParams();
 	const { user, logout } = useAuth();
+	const [userExists, setUserExists] = useState(true);
 
 	async function handleLogout() {
 		await logout(); // auto-redirect
+	}
+
+	function handleUserNotExists() {
+		setUserExists(false);
+	}
+
+	if (!userExists) {
+		return NotFound();
 	}
 
 	return (
@@ -39,7 +50,7 @@ function EmployeeDetail() {
 					<div className="card m-2 flex-fill">
 						<div className="card-body">
 							<h5 className="card-title">Data Diri</h5>
-							<UserInfo userId={params.employeeId} />
+							<UserInfo userId={params.employeeId} handleNotExists={handleUserNotExists} />
 						</div>
 					</div>
 					<div className="card m-2 flex-fill">

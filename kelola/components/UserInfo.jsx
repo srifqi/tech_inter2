@@ -6,7 +6,7 @@ const BE_ROOT_URL = import.meta.env.VITE_BE_ROOT_URL;
 /**
  * A component showing an information table of an employee with given ID
  */
-function UserInfo({ userId }) {
+function UserInfo({ userId, handleNotExists }) {
 	const [userInfo, setUserInfo] = useState({
 		full_name: "",
 		department: "",
@@ -54,7 +54,10 @@ function UserInfo({ userId }) {
 				.then(res => {
 					setUserInfo(res.data);
 				})
-				.catch(() => setUserInfo({}));
+				.catch(() => {
+					setUserInfo({});
+					handleNotExists();
+				});
 		}
 	}, [userId, tableLoadTime]);
 
