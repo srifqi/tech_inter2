@@ -1,4 +1,5 @@
 import express from "express";
+import bcrypt from "bcrypt";
 import { param, query } from "express-validator";
 import { addNotEmptyStringValidation, handleValidationResult } from "../middlewares/validation.js";
 import authenticateToken from "../middlewares/authentication.js";
