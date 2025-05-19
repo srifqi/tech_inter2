@@ -5,6 +5,7 @@ import authenticateToken from "../middlewares/authentication.js";
 import authorizeRoles from "../middlewares/authorization.js";
 import dbPool from "../db.js";
 import uploadRoutes from "./uploads.js";
+import AttendanceController from "../controllers/attendance.controller.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -18,35 +19,7 @@ router.get("/",
 	handleValidationResult,
 	authenticateToken,
 	authorizeRoles("employee", "admin"),
-	async (req, res) => {
-		try {
-			const limit = Number(req.query.limit);
-			let queryString = "SELECT attendance_id, check_in_date, check_in_time, photo_path " +
-				"FROM attendances " +
-				"WHERE user_id = ? " +
-				"ORDER BY check_in_date DESC " +
-				"LIMIT ?";
-			let queryParameters = [req.params.id, limit];
-			if (req.query.page) {
-				const page = Number(req.query.page);
-				queryString += " OFFSET ?;";
-				queryParameters.push((page - 1) * limit);
-			} else {
-				queryString += ";";
-			}
-			const [rows] = await dbPool.query(
-				queryString,
-				queryParameters
-			);
-			res.json(rows);
-		} catch (err) {
-			console.error(err);
-			return res.status(500).json({
-				message: "Database query failed.",
-				sqlMessage: err.sqlMessage
-			});
-		}
-	}
+	AttendanceController.getUserAttendances
 );
 
 // GET /users/:id/attendances/:aid -> Detail of a single user attendance
